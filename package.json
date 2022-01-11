@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "NODE_ENV=production node server",
-    "dev": "nodemon server",
-    "release": "standard-version"
+    "release": "standard-version",
+    "dev": "nodemon server"
   },
   "author": "Sanam",
   "license": "ISC",
