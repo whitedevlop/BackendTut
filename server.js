@@ -10,6 +10,7 @@ const colors = require("colors");
 
 // file i.e. image upload
 const fileupload = require("express-fileupload");
+const cookieParser = require("cookie-parser");
 
 // Bringing errorHandler
 const errorHandler = require("./middleware/error");
@@ -31,6 +32,9 @@ const app = express();
 
 // Body parser
 app.use(express.json());
+
+// Cookie parser
+app.use(cookieParser())
 
 // Dev logging middleware
 if (process.env.NODE_ENV === "development") {
