@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 // bringing middleware logger to server.js
@@ -6,6 +7,9 @@ const dotenv = require("dotenv");
 // bringing morgan logger
 const morgan = require("morgan");
 const colors = require("colors");
+
+// file i.e. image upload
+const fileupload = require('express-fileupload');
 
 // Bringing errorHandler
 const errorHandler = require("./middleware/error"); 
@@ -31,6 +35,12 @@ app.use(express.json());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// file uploading
+app.use(fileupload());
+
+// Set Static folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
