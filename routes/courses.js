@@ -12,3 +12,4 @@ router.route("/").get(getCourses).post(addCourse);
 router.route("/:id").get(getCourse).put(updateCourse);
 
 module.exports = router;
+// this is demo
