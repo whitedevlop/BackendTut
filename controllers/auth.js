@@ -50,6 +50,21 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc        Log user out /clear cookies
+// @route       GET / api/v1/auth/me
+// @access      Private
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie("tokens", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
+
 // @desc        Get Logged in user
 // @route       POST / api/v1/auth/me
 // @access      Private
@@ -62,19 +77,18 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 // @desc        Update User details
 // @route       PUT / api/v1/auth/updatedetails
 // @access      Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
-      name: req.body.name,
-      email: req.body.email
+    name: req.body.name,
+    email: req.body.email,
   };
 
-  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate,{
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
     new: true,
-    runValidators:true
+    runValidators: true,
   });
 
   res.status(200).json({
@@ -87,21 +101,17 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route       PUT / api/v1/auth/updatepassword
 // @access      Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+  // Check current password
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse("Password is incorrect", 401));
+  }
 
-  const user = await User.findById(req.user.id).select('+password');
-// Check current password
-if(!(await user.matchPassword(req.body.currentPassword))) {
-  return next(new ErrorResponse('Password is incorrect', 401 ));
-}
-
-user.password = req.body.newPassword;
-await user.save();
+  user.password = req.body.newPassword;
+  await user.save();
 
   sendTokenResponse(user, 200, res);
 });
-
-
-
 
 // @desc        Forgot password
 // @route       POST / api/v1/auth/forgotpassword
